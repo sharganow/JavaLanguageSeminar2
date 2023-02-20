@@ -19,9 +19,10 @@ public class JsonSearch {
         }
         return index;
     }
-    static boolean fillSelect(String[] fields, Scanner iScanner){
+    static boolean fillSelect(String[] fields){
         boolean seek = false;
         try {
+            Scanner iScanner = new Scanner(System.in);
             for (String key : keys) {
                 System.out.printf("Введите %s: ", key);
                 select_keys[getIndex(keys, key)] = iScanner.nextLine();
@@ -32,17 +33,25 @@ public class JsonSearch {
                     seek = true;
                 }
             }
+            if(!seek) iScanner.close();
         }
         catch(Exception e){
-            System.out.println("Что-то не пошло, это можно залогжить в файл");
+            System.out.printf("Что-то не пошло: %s, это можно залогжить в файл", e.getMessage());
             seek = false;
         }
         return seek;
     }
     static String seekStudent(String[] fields){
-        String[] mergeKeyFields = new String[keys.length];
+        int i = 0;
+        for(String value : fields){
+            if (value != "null") i++;
+        }
+        String[] mergeKeyFields = new String[i];
+        i = 0;
         for(String key : keys){
-            mergeKeyFields[getIndex(keys, key)] = key + ":" + fields[getIndex(keys, key)];
+            if(fields[getIndex(keys, key)] != "null"){
+                mergeKeyFields[i++] = key + ":" + fields[getIndex(keys, key)];
+            }
         }
         return String.join(", ",mergeKeyFields);
     }
@@ -86,10 +95,10 @@ public class JsonSearch {
         for (String fname : dir.list()) {
             System.out.printf("%s \t%d\n",fname, fname.length());
         }
-        Scanner iScanner = new Scanner(System.in);
-        while(fillSelect(select_keys, iScanner)){
+
+        while(fillSelect(select_keys)){
             System.out.println(seekStudent(select_keys));
         }
-        iScanner.close();
+
     }
 }
