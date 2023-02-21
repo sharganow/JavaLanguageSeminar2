@@ -8,11 +8,15 @@ public class JsonSearch {
     static String[] keys = new String[] {"name", "country", "city", "age"};
     static String[] selectKeys = new String[keys.length];
     static String[] filesNames = new String[keys.length];
-    static boolean[] filesChanged = new boolean[keys.length];
+    static boolean[] filesChanged = new boolean[] {false, false, false, false};
 
     static int deltaFreeSpase = 10;
     static StringBuilder[][] findIndexes = new StringBuilder[keys.length][];
-    static StringBuilder[] studentsBase;
+    static StringBuilder[] studentsBase = null;
+
+    static int[][] matchedIndexes = new int[keys.length][];
+    static StringBuilder[] matchedStudents = null;
+
 
     static int[] getInt(String user_task, int index){
         int[] takeInt = new int[] {-1, index};
@@ -152,6 +156,7 @@ public class JsonSearch {
                 pathFile = pathDir.concat("/" + key + ".keys");
                 findIndexes[getIndex(keys, key)] = readFile(pathFile);
             }
+            filesChanged = new boolean[] {false, false, false, false};
         }
 /*        for (String fname : dir.list()) {
             System.out.printf("%s \t%d\n",fname, fname.length());
@@ -176,7 +181,7 @@ public class JsonSearch {
                 System.out.printf("Введите %s: ", key);
                 selectKeys[getIndex(keys, key)] = iScanner.nextLine();
                 if (selectKeys[getIndex(keys, key)].length() == 0) {
-                    selectKeys[getIndex(keys, key)] = "null";
+                    selectKeys[getIndex(keys, key)] = null;
                 }
                 else{
                     seek = true;
@@ -193,16 +198,42 @@ public class JsonSearch {
     static String seekStudent(String[] fields){
         int i = 0;
         for(String value : fields){
-            if (value != "null") i++;
+            if (value != null) i++;
         }
         String[] mergeKeyFields = new String[i];
         i = 0;
         for(String key : keys){
-            if(fields[getIndex(keys, key)] != "null"){
+            if(fields[getIndex(keys, key)] != null){
                 mergeKeyFields[i++] = key + ":" + fields[getIndex(keys, key)];
+            }
+            else{
+
             }
         }
         return String.join(", ",mergeKeyFields);
+    }
+
+    static int[] fillMatchedIndexes(String key, int index){
+        if(findIndexes[index].length > 1){
+            StringBuilder keyElement;
+            int[] lastInt = new int[2];
+            for(int i = 1; i < findIndexes[index].length){
+                keyElement =  findIndexes[index][i];
+                if((lastInt[1] = keyElement.lastIndexOf(key)) > 0) {
+                    int[] fillIndexses = new int[keyElement.toString().length()]; // это грубый подсчёт
+                    for(int j = 0; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++){
+
+                    }
+                    while ((lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0) {
+                        students += 1;
+                    }
+                }
+            }
+            return null;
+        }
+        else{
+            return null;
+        }
     }
 
     public static void main(String[] args){
