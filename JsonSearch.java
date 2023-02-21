@@ -9,9 +9,96 @@ public class JsonSearch {
     static String[] selectKeys = new String[keys.length];
     static String[] filesNames = new String[keys.length];
     static boolean[] filesChanged = new boolean[keys.length];
+
+    static int deltaFreeSpase = 10;
     static StringBuilder[][] findIndexes = new StringBuilder[keys.length][];
 
-
+    static int[] getInt(String user_task, int index){
+        int[] takeInt = new int[] {-1, index};
+        StringBuilder arg = new StringBuilder();
+        for(;index < user_task.length(); index++){
+            switch (user_task.charAt(index)) {
+                case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9': {
+                    arg.append(user_task.charAt(index));
+                }break;
+                default:{
+                    if(arg.length() != 0){
+                        takeInt[1] = index - 1;
+                        index = user_task.length();
+                    }
+                }
+            }
+        }
+        if(arg.length() == 0){
+            takeInt[1] = user_task.length();
+        }
+        else{
+            takeInt[0] = Integer.parseInt(arg.toString());
+        }
+        return takeInt;
+    }
+    static StringBuilder[] readFile(String path){
+        StringBuilder[]  findIndex;
+        StringBuilder    element = new StringBuilder();
+        int lastIndex;
+        int[] lastInt = new int[] {0, -1};
+        try {
+            BufferedReader file = new BufferedReader(new FileReader(path));
+            String str = file.readLine();
+            lastIndex = str.lastIndexOf("length:");
+            if(lastIndex < 0){
+                System.out.printf("Отсутствует параметр %s в файле %s, можно это заложить в файл", "length:", path);
+                findIndex = new StringBuilder[1 + deltaFreeSpase];
+                element.append("length:0,students:0" + System.lineSeparator());
+                findIndex[0] = element;
+            }
+            else{
+                lastInt = getInt(str, lastIndex);
+                if(lastInt[0] <= 0){
+                    findIndex = new StringBuilder[1 + deltaFreeSpase];
+                    element.append("length:0,students:0" + System.lineSeparator());
+                    findIndex[0] = element;
+                }
+                else{
+                    int students = 0;       // это не прочитанное значение из файла, а заготовленный счетчик для последующего контроля "целостности" файла
+                    int lengthFile = lastInt[0];
+                    findIndex = new StringBuilder[lengthFile + deltaFreeSpase];
+                    findIndex[0] = new StringBuilder();
+                    findIndex[0].append(str);
+                    for(int i = 1; i <= lengthFile; i++){
+                        str = file.readLine();
+                        if(str == null){
+                            str = findIndex[0].toString();
+                            lastIndex = str.lastIndexOf("students:");
+                            lastInt = getInt(str, lastIndex);
+                            findIndex[0].delete(0, findIndex[0].length());
+                            if(lastInt[0] != students){
+                                System.out.printf(  "В файле %s отличаются приведённое " +
+                                                    "количество студентов:%s от фактического:%s, " +
+                                                    "можно это заложить в файл", path, lastInt[0], students);
+                            }
+                            findIndex[0].append("length:" + String.valueOf(lengthFile) + ",students:" + String.valueOf(students));
+                        }
+                        else{
+                            findIndex[i] = new StringBuilder();
+                            findIndex[i].append(str);
+                            lastInt[1] = str.lastIndexOf(":");
+                            while ((lastInt = getInt(str, lastInt[1]))[0] > 0){
+                                students += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch(Exception e){
+            System.out.printf("Что-то не пошло в файле %s: %s, это можно залогжить в файл", path, e.getMessage());
+            findIndex = new StringBuilder[1  + deltaFreeSpase];
+            element.append("length:0,students:0" + System.lineSeparator());
+            findIndex[0] = element;
+        }
+        return findIndex;
+    }
     static void startInitialFiles(){
         String pathProject = System.getProperty ("user.dir" );
         String pathDir = pathProject .concat("/JnSh");
