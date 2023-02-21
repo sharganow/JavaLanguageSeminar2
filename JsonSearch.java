@@ -214,26 +214,24 @@ public class JsonSearch {
     }
 
     static int[] fillMatchedIndexes(String key, int index){
+        int[] fillIndexses = null;
         if(findIndexes[index].length > 1){
             StringBuilder keyElement;
             int[] lastInt = new int[2];
-            for(int i = 1; i < findIndexes[index].length){
+            for(int i = 1; i <= findIndexes[index].length; i++){
                 keyElement =  findIndexes[index][i];
                 if((lastInt[1] = keyElement.lastIndexOf(key)) > 0) {
-                    int[] fillIndexses = new int[keyElement.toString().length()]; // это грубый подсчёт
-                    for(int j = 0; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++){
-
+                    fillIndexses = new int[keyElement.toString().length()]; // это грубый подсчёт
+                    int j = 0;
+                    for( ; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++){
+                        fillIndexses[j] = lastInt[0];
                     }
-                    while ((lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0) {
-                        students += 1;
-                    }
+                    fillIndexses[j] = -1;
+                    i = findIndexes[index].length;
                 }
             }
-            return null;
         }
-        else{
-            return null;
-        }
+        return fillIndexses;
     }
 
     public static void main(String[] args){
