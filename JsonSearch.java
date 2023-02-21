@@ -21,11 +21,11 @@ public class JsonSearch {
             switch (user_task.charAt(index)) {
                 case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9': {
                     arg.append(user_task.charAt(index));
-                    takeInt[1] = index;
+                    takeInt[1] = index + 1;
                 }break;
                 default:{
                     if(arg.length() != 0){
-                        takeInt[1] = index - 1;
+                        takeInt[1] = index;
                         index = user_task.length();
                     }
                 }
@@ -153,9 +153,9 @@ public class JsonSearch {
                 findIndexes[getIndex(keys, key)] = readFile(pathFile);
             }
         }
-        for (String fname : dir.list()) {
+/*        for (String fname : dir.list()) {
             System.out.printf("%s \t%d\n",fname, fname.length());
-        }
+        } //*/
     }
 
     static int getIndex(String[] fields, String value){
@@ -210,6 +210,5 @@ public class JsonSearch {
         while(fillSelect(selectKeys)){
             System.out.println(seekStudent(selectKeys));
         }
-
     }
 }
