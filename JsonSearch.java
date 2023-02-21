@@ -12,6 +12,7 @@ public class JsonSearch {
 
     static int deltaFreeSpase = 10;
     static StringBuilder[][] findIndexes = new StringBuilder[keys.length][];
+    static StringBuilder[] studentsBase;
 
     static int[] getInt(String user_task, int index){
         int[] takeInt = new int[] {-1, index};
@@ -20,6 +21,7 @@ public class JsonSearch {
             switch (user_task.charAt(index)) {
                 case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9': {
                     arg.append(user_task.charAt(index));
+                    takeInt[1] = index;
                 }break;
                 default:{
                     if(arg.length() != 0){
@@ -142,8 +144,14 @@ public class JsonSearch {
             catch(Exception e){
                 System.out.printf("Что-то не пошло: %s, это можно залогжить в файл", e.getMessage());
             }
-        } else {
-            System.out.println("-");
+        }
+        else{
+            String pathFile = pathDir.concat("/students.base");
+            studentsBase = readFile(pathFile);
+            for(String key : keys){
+                pathFile = pathDir.concat("/" + key + ".keys");
+                findIndexes[getIndex(keys, key)] = readFile(pathFile);
+            }
         }
         for (String fname : dir.list()) {
             System.out.printf("%s \t%d\n",fname, fname.length());
