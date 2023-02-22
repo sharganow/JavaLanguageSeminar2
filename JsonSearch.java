@@ -215,12 +215,19 @@ public class JsonSearch {
     static void seekStudent(String[] fields){
         int[] findStudents = null;
         for (String key : keys) {
-            if(findIndexesByWord[getIndex(keys, key)] != null){
-                if(findStudents == null){
-                    findStudents = getSliceInt(findIndexesByWord[getIndex(keys, key)], 0, findIndexesByWord[getIndex(keys, key)].length-1);
+            int i = getIndex(keys, key);
+            if(fields[i]!= null) {
+                if (findIndexesByWord[i] != null) {
+                    if (findStudents == null) {
+                        findStudents = getSliceInt(findIndexesByWord[i], 0, findIndexesByWord[i].length - 1);
+                    } else {
+                        if ((findStudents = getMatchedOfCoupleIndexes(findStudents, findIndexesByWord[i])) == null)
+                            break;
+                    }
                 }
                 else{
-                    if ((findStudents = getMatchedOfCoupleIndexes(findStudents, findIndexesByWord[getIndex(keys, key)])) == null) break;
+                    findStudents = null;
+                    break;
                 }
             }
         }
