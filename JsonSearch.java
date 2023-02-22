@@ -264,31 +264,58 @@ public class JsonSearch {
 
     static int addNewStudentToStudentsBase(StringBuilder[] base, String sNewStudent){
         int iNewStudent = -1;
+
+        int[] lastInt = new int[2];
+        lastInt[1] = base[0].indexOf(":");
+        int length = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
+        lastInt[1] = base[0].indexOf(":", lastInt[1]);
+        int students = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
+        if(students < 0) students = 0;
+
         for(int i = base.length - deltaFreeSpase; i < base.length; i++){
             if(base[i] == null){
                 base[i] = new StringBuilder().append(sNewStudent);
                 iNewStudent = i;
+                length++;
+                students++;
                 break;
             }
+        }
+        if(iNewStudent > 0){
+            base[0].delete(0, base[0].length()).append(String.format("length:%d, students:%d",length, students));
         }
         return iNewStudent;
     }
     static boolean addIndexOfNewStudentToDataBase(StringBuilder[] base, String sWordNewStudent, int iNewStudent){
         boolean success = false;
+
+        int[] lastInt = new int[2];
+        lastInt[1] = base[0].indexOf(":");
+        int length = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
+        lastInt[1] = base[0].indexOf(":", lastInt[1]);
+        int students = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
+        if(students < 0) students = 0;
+
         for(int i = 0; i < base.length; i++){
             if(base[i] == null){
                 base[i] = new StringBuilder().append(String.format("%s:%d",sWordNewStudent,iNewStudent));
                 success = true;
+                length++;
+                students++;
                 break;
             }
             else{
                 if(base[i].lastIndexOf(sWordNewStudent+":") >= 0){
                     base[i].append(String.format(",%d",iNewStudent));
                     success = true;
+                    students++;
                     break;
                 }
             }
         }
+
+        if(success) base[0].delete(0, base[0].length()).append(String.format("length:%d, students:%d",length, students));
+
         return success;
     }
     static boolean ifSearchQueryFull(String[] fields){
