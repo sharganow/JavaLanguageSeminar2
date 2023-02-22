@@ -186,7 +186,7 @@ public class JsonSearch {
                     findIndexesByWord[getIndex(keys, key)] = null;
                 }
                 else{
-                    findIndexesByWord[getIndex(keys, key)] = fillFindIndexesByWord(selectKeys[getIndex(keys, key)], getIndex(keys, key));
+                    findIndexesByWord[getIndex(keys, key)] = fillFindIndexesByWord(selectKeys[getIndex(keys, key)], indexesByWord[getIndex(keys, key)]);
                     seek = true;
                 }
             }
@@ -217,7 +217,6 @@ public class JsonSearch {
         for (String key : keys) {
             if(findIndexesByWord[getIndex(keys, key)] != null){
                 if(findStudents == null){
-                    //findStudents = new int[findIndexesByWord[getIndex(keys, key)][findIndexesByWord[getIndex(keys, key)].length-1]];
                     findStudents = getSliceInt(findIndexesByWord[getIndex(keys, key)], 0, findIndexesByWord[getIndex(keys, key)].length-1);
                 }
                 else{
@@ -225,15 +224,79 @@ public class JsonSearch {
                 }
             }
         }
-        if (findStudents == null){
-            System.out.println(getSelectString(fields));
-        }
-        else{
-            System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} дал следующий результат:");
-            for(int student: findStudents){
-                System.out.println(studentsBase[student].toString());
+        if(ifSearchQueryFull(fields)){
+            if (findStudents == null){
+                System.out.println("Студента: {"+getSelectString(fields)+"} не было в базе и мы его добавили");
+                int newStudent = addNewStudentToStudentsBase(studentsBase, getSelectString(fields));
+                if(newStudent > 0){
+                    int indexKey;
+                    for(String key : keys){
+                        indexKey = getIndex(keys, key);
+                        filesChanged[indexKey] = addIndexOfNewStudentToDataBase(
+                                                                                indexesByWord[indexKey],
+                                                                                fields[indexKey],
+                                                                                newStudent);
+                    }
+                    System.out.println("У нас получилось");
+                }
+
+
+            }
+            else{
+                System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} дал следующий результат:");
+                for(int student: findStudents){
+                    System.out.println(studentsBase[student].toString());
+                }
             }
         }
+        else{
+            if (findStudents == null){
+                System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} не дал следующий результата");
+            }
+            else{
+                System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} дал следующий результат:");
+                for(int student: findStudents){
+                    System.out.println(studentsBase[student].toString());
+                }
+            }
+        }
+    }
+
+    static int addNewStudentToStudentsBase(StringBuilder[] base, String sNewStudent){
+        int iNewStudent = -1;
+        for(int i = base.length - deltaFreeSpase; i < base.length; i++){
+            if(base[i] == null){
+                base[i] = new StringBuilder().append(sNewStudent);
+                iNewStudent = i;
+                break;
+            }
+        }
+        return iNewStudent;
+    }
+    static boolean addIndexOfNewStudentToDataBase(StringBuilder[] base, String sWordNewStudent, int iNewStudent){
+        boolean success = false;
+        for(int i = 0; i < base.length; i++){
+            if(base[i] == null){
+                base[i] = new StringBuilder().append(String.format("%s:%d",sWordNewStudent,iNewStudent));
+                success = true;
+                break;
+            }
+            else{
+                if(base[i].lastIndexOf(sWordNewStudent+":") >= 0){
+                    base[i].append(String.format(",%d",iNewStudent));
+                    success = true;
+                    break;
+                }
+            }
+        }
+        return success;
+    }
+    static boolean ifSearchQueryFull(String[] fields){
+        boolean bSearchQueryFull = true;
+        for(String word: fields){
+            if(word == null) bSearchQueryFull = false; break;
+        }
+        return bSearchQueryFull;
     }
     static int[] getMatchedOfCoupleIndexes(int[] first, int[] second){
         int[] matched = new int[first.length];
@@ -250,13 +313,15 @@ public class JsonSearch {
         return matched;
     }
 
-    static int[] fillFindIndexesByWord(String key, int index){
+    static int[] fillFindIndexesByWord(String word, StringBuilder[] indByWord){
         int[] fillIndexses = null;
         StringBuilder keyElement;
         int[] lastInt = new int[2];
-        for(int i = 1; i <= indexesByWord[index].length; i++){
-            if((keyElement =  indexesByWord[index][i]) != null) {
-                if ((lastInt[1] = keyElement.lastIndexOf(key)) > 0) {
+        for(int i = 1; i <= indByWord.length; i++){
+            if((keyElement =  indByWord[i]) != null) {
+                lastInt[1] = keyElement.lastIndexOf(word);
+                if ((lastInt[1]) >= 0) {
+                    lastInt[1] = keyElement.lastIndexOf(":");
                     fillIndexses = new int[keyElement.toString().length()]; // это грубый подсчёт
                     int j = 0;
                     for (; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++) {
@@ -265,11 +330,11 @@ public class JsonSearch {
                 /*fillIndexses[j] = -1;                       // обозначили границу полезного массива
                 fillIndexses[fillIndexses.length-1] = j;    // зафиксировали полезную длину массива*/
                     fillIndexses = getSliceInt(fillIndexses, 0, j - 1);
-                    i = indexesByWord[index].length;              // прерываем цикл поиска ключа, тк он был найден и обработан
+                    i = indByWord.length;              // прерываем цикл поиска ключа, тк он был найден и обработан
                 }
             }
             else{
-                i = indexesByWord[index].length;              // прерываем цикл поиска ключа, дошли до пустого ключа
+                i = indByWord.length;              // прерываем цикл поиска ключа, дошли до пустого ключа
             }
         }
         return fillIndexses;
@@ -277,7 +342,7 @@ public class JsonSearch {
     static int[] getSliceInt(int[] mass, int first, int last){
         int[] slice = null;
         if(last >= mass.length)  last = mass.length - 1;
-        if(last > first){
+        if(last >= first){
             slice = new int[last - first + 1];
             for(int i = 0; i < slice.length; i++, first++){
                 slice[i] = mass[first];
@@ -289,7 +354,7 @@ public class JsonSearch {
     public static void main(String[] args){
         startInitialFiles();
         while(fillSelect(selectKeys)){
-            System.out.println(getSelectString(selectKeys));
+            seekStudent(selectKeys);
         }
         iScanner.close();
     }
