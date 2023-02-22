@@ -1,0 +1,24 @@
+февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+INFO: Файл базы данных студентов создан, он пуст
+февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+INFO: Поисковый Файл name.keys  базы данных студенитов создан, он пуст
+февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+INFO: Поисковый Файл country.keys  базы данных студенитов создан, он пуст
+февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+INFO: Поисковый Файл city.keys  базы данных студенитов создан, он пуст
+февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+INFO: Поисковый Файл age.keys  базы данных студенитов создан, он пуст
+февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 1:44:19 AM JsonSearch seekStudent
+INFO: Студента: {name:Andrew, country:Russia, city:Tomsk, age:16} добавили в базу данных
+февр. 23, 2023 1:45:20 AM JsonSearch seekStudent
+INFO: Студента: {name:Andrew, country:Russia, city:Tomsk, age:17} добавили в базу данных
+февр. 23, 2023 1:46:03 AM JsonSearch seekStudent
+INFO: Студента: {name:Viktoria, country:England, city:London, age:20} добавили в базу данных
+февр. 23, 2023 1:46:36 AM JsonSearch seekStudent
+INFO: Студента: {name:Andrew, country:England, city:London, age:45} добавили в базу данных
+февр. 23, 2023 1:47:30 AM JsonSearch seekStudent
+INFO: Студента: {name:Viktoria, country:Russia, city:Chelyabinsk, age:13} добавили в базу данных
+февр. 23, 2023 1:47:56 AM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
