@@ -5,6 +5,8 @@
 import java.io.*;
 import java.util.Scanner;
 public class JsonSearch {
+
+    static Scanner iScanner = new Scanner(System.in);
     static String[] keys = new String[] {"name", "country", "city", "age"};
     static String[] selectKeys = new String[keys.length];
     static String[] filesNames = new String[keys.length];
@@ -176,18 +178,18 @@ public class JsonSearch {
     static boolean fillSelect(String[] fields){
         boolean seek = false;
         try {
-            Scanner iScanner = new Scanner(System.in);
             for (String key : keys) {
                 System.out.printf("Введите %s: ", key);
                 selectKeys[getIndex(keys, key)] = iScanner.nextLine();
                 if (selectKeys[getIndex(keys, key)].length() == 0) {
                     selectKeys[getIndex(keys, key)] = null;
+                    matchedIndexes[getIndex(keys, key)] = null;
                 }
                 else{
+                    //matchedIndexes[getIndex(keys, key)] = fillMatchedIndexes(selectKeys[ getIndex(keys, key)], getIndex(keys, key));
                     seek = true;
                 }
             }
-            if(!seek) iScanner.close();
         }
         catch(Exception e){
             System.out.printf("Что-то не пошло: %s, это можно залогжить в файл", e.getMessage());
@@ -195,7 +197,7 @@ public class JsonSearch {
         }
         return seek;
     }
-    static String seekStudent(String[] fields){
+    static String getSelectString(String[] fields){
         int i = 0;
         for(String value : fields){
             if (value != null) i++;
@@ -206,11 +208,46 @@ public class JsonSearch {
             if(fields[getIndex(keys, key)] != null){
                 mergeKeyFields[i++] = key + ":" + fields[getIndex(keys, key)];
             }
-            else{
-
-            }
+            else{}
         }
         return String.join(", ",mergeKeyFields);
+    }
+    static void seekStudent(String[] fields){
+        int[] findStudents = null;
+        for (String key : keys) {
+            if(matchedIndexes[getIndex(keys, key)] != null){
+                if(findStudents == null){
+                    //findStudents = new int[matchedIndexes[getIndex(keys, key)][matchedIndexes[getIndex(keys, key)].length-1]];
+                    findStudents = getSliceInt(matchedIndexes[getIndex(keys, key)], 0, matchedIndexes[getIndex(keys, key)].length-1);
+                }
+                else{
+                    if ((findStudents = getMatchedOfCoupleIndexes(findStudents, matchedIndexes[getIndex(keys, key)])) == null) break;
+                }
+            }
+        }
+        if (findStudents == null){
+            System.out.println(getSelectString(fields));
+        }
+        else{
+            System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} дал следующий результат:");
+            for(int student: findStudents){
+                System.out.println(studentsBase[student].toString());
+            }
+        }
+    }
+    static int[] getMatchedOfCoupleIndexes(int[] first, int[] second){
+        int[] matched = new int[first.length];
+        int matcedValue = 0;
+        for(int i = 0; i < first.length; i++){
+            for(int j = 0; j < second.length; j++){
+                if(first[i] == second[j]){
+                    matched[matcedValue++] = first[i];
+                    j = second.length;
+                }
+            }
+        }
+        matched = getSliceInt(matched, 0, matcedValue-1);
+        return matched;
     }
 
     static int[] fillMatchedIndexes(String key, int index){
@@ -226,18 +263,32 @@ public class JsonSearch {
                     for( ; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++){
                         fillIndexses[j] = lastInt[0];
                     }
-                    fillIndexses[j] = -1;
-                    i = findIndexes[index].length;
+                    /*fillIndexses[j] = -1;                       // обозначили границу полезного массива
+                    fillIndexses[fillIndexses.length-1] = j;    // зафиксировали полезную длину массива*/
+                    fillIndexses = getSliceInt(fillIndexses, 0, j-1);
+                    i = findIndexes[index].length;              // прерываем цикл поиска ключа, тк он был найден и обработан
                 }
             }
         }
         return fillIndexses;
     }
+    static int[] getSliceInt(int[] mass, int first, int last){
+        int[] slice = null;
+        if(last >= mass.length)  last = mass.length - 1;
+        if(last > first){
+            slice = new int[last - first + 1];
+            for(int i = 0; i < slice.length; i++, first++){
+                slice[i] = mass[first];
+            }
+        }
+        return slice;
+    }
 
     public static void main(String[] args){
         startInitialFiles();
         while(fillSelect(selectKeys)){
-            System.out.println(seekStudent(selectKeys));
+            System.out.println(getSelectString(selectKeys));
         }
+        iScanner.close();
     }
 }
