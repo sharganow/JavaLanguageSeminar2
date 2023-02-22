@@ -377,12 +377,69 @@ public class JsonSearch {
         }
         return slice;
     }
+    static void stopAndQuit(){
+        boolean saveStudentBase = false;
+        String pathProject = System.getProperty ("user.dir" );
+        String pathDir = pathProject .concat("/JnSh");
+
+        for(String key: keys){
+            int indexKey = getIndex(keys, key);
+            if(filesChanged[indexKey]){
+                saveStudentBase = true;
+                String pathFile = pathDir.concat("/" + key + ".keys");
+                File file = new File(pathFile);
+                if(file.isFile()) {
+                    try {
+                        FileWriter fileWriter = new FileWriter(file, false);
+                        for(int i = 0; i < indexesByWord[indexKey].length; i++){
+                            if(indexesByWord[indexKey][i] != null) {
+                                fileWriter.write(indexesByWord[indexKey][i].toString());
+                                fileWriter.append(System.lineSeparator());
+                            }
+                            else{
+                                i = indexesByWord[indexKey].length;
+                            }
+                        }
+                        fileWriter.flush();
+                        fileWriter.close();
+                    }
+                    catch(Exception e){
+                        System.out.printf("Что-то не пошло c файлом %s во время сохранения: %s, это можно залогжить в файл",pathFile, e.getMessage());
+                    }
+                }
+            }
+        }
+        if(saveStudentBase){
+            String pathFile = pathDir.concat("/students.base");
+            File file = new File(pathFile);
+            if(file.isFile()) {
+                try {
+                    FileWriter fileWriter = new FileWriter(file, false);
+                    for(int i = 0; i < studentsBase.length; i++){
+                        if(studentsBase[i] != null) {
+                            fileWriter.write(studentsBase[i].toString());
+                            fileWriter.append(System.lineSeparator());
+                        }
+                        else{
+                            i = studentsBase.length;
+                        }
+                    }
+                    fileWriter.flush();
+                    fileWriter.close();
+                }
+                catch(Exception e){
+                    System.out.printf("Что-то не пошло c файлом %s во время сохранения: %s, это можно залогжить в файл",pathFile, e.getMessage());
+                }
+            }
+        }
+        iScanner.close();
+    }
 
     public static void main(String[] args){
         startInitialFiles();
         while(fillSelect(selectKeys)){
             seekStudent(selectKeys);
         }
-        iScanner.close();
+        stopAndQuit();
     }
 }
