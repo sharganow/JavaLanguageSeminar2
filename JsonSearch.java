@@ -8,15 +8,15 @@ public class JsonSearch {
 
     static Scanner iScanner = new Scanner(System.in);
     static String[] keys = new String[] {"name", "country", "city", "age"};
-    static String[] selectKeys = new String[keys.length];
+    static String[] selectKeys = new String[keys.length]; // Сам Json поисковый запрос
     static String[] filesNames = new String[keys.length];
     static boolean[] filesChanged = new boolean[] {false, false, false, false};
 
     static int deltaFreeSpase = 10;
-    static StringBuilder[][] findIndexes = new StringBuilder[keys.length][];
+    static StringBuilder[][] indexesByWord = new StringBuilder[keys.length][];
     static StringBuilder[] studentsBase = null;
 
-    static int[][] matchedIndexes = new int[keys.length][];
+    static int[][] findIndexesByWord = new int[keys.length][];
     static StringBuilder[] matchedStudents = null;
 
 
@@ -156,7 +156,7 @@ public class JsonSearch {
             studentsBase = readFile(pathFile);
             for(String key : keys){
                 pathFile = pathDir.concat("/" + key + ".keys");
-                findIndexes[getIndex(keys, key)] = readFile(pathFile);
+                indexesByWord[getIndex(keys, key)] = readFile(pathFile);
             }
             filesChanged = new boolean[] {false, false, false, false};
         }
@@ -183,10 +183,10 @@ public class JsonSearch {
                 selectKeys[getIndex(keys, key)] = iScanner.nextLine();
                 if (selectKeys[getIndex(keys, key)].length() == 0) {
                     selectKeys[getIndex(keys, key)] = null;
-                    matchedIndexes[getIndex(keys, key)] = null;
+                    findIndexesByWord[getIndex(keys, key)] = null;
                 }
                 else{
-                    //matchedIndexes[getIndex(keys, key)] = fillMatchedIndexes(selectKeys[ getIndex(keys, key)], getIndex(keys, key));
+                    findIndexesByWord[getIndex(keys, key)] = fillFindIndexesByWord(selectKeys[getIndex(keys, key)], getIndex(keys, key));
                     seek = true;
                 }
             }
@@ -215,13 +215,13 @@ public class JsonSearch {
     static void seekStudent(String[] fields){
         int[] findStudents = null;
         for (String key : keys) {
-            if(matchedIndexes[getIndex(keys, key)] != null){
+            if(findIndexesByWord[getIndex(keys, key)] != null){
                 if(findStudents == null){
-                    //findStudents = new int[matchedIndexes[getIndex(keys, key)][matchedIndexes[getIndex(keys, key)].length-1]];
-                    findStudents = getSliceInt(matchedIndexes[getIndex(keys, key)], 0, matchedIndexes[getIndex(keys, key)].length-1);
+                    //findStudents = new int[findIndexesByWord[getIndex(keys, key)][findIndexesByWord[getIndex(keys, key)].length-1]];
+                    findStudents = getSliceInt(findIndexesByWord[getIndex(keys, key)], 0, findIndexesByWord[getIndex(keys, key)].length-1);
                 }
                 else{
-                    if ((findStudents = getMatchedOfCoupleIndexes(findStudents, matchedIndexes[getIndex(keys, key)])) == null) break;
+                    if ((findStudents = getMatchedOfCoupleIndexes(findStudents, findIndexesByWord[getIndex(keys, key)])) == null) break;
                 }
             }
         }
@@ -250,24 +250,26 @@ public class JsonSearch {
         return matched;
     }
 
-    static int[] fillMatchedIndexes(String key, int index){
+    static int[] fillFindIndexesByWord(String key, int index){
         int[] fillIndexses = null;
-        if(findIndexes[index].length > 1){
-            StringBuilder keyElement;
-            int[] lastInt = new int[2];
-            for(int i = 1; i <= findIndexes[index].length; i++){
-                keyElement =  findIndexes[index][i];
-                if((lastInt[1] = keyElement.lastIndexOf(key)) > 0) {
+        StringBuilder keyElement;
+        int[] lastInt = new int[2];
+        for(int i = 1; i <= indexesByWord[index].length; i++){
+            if((keyElement =  indexesByWord[index][i]) != null) {
+                if ((lastInt[1] = keyElement.lastIndexOf(key)) > 0) {
                     fillIndexses = new int[keyElement.toString().length()]; // это грубый подсчёт
                     int j = 0;
-                    for( ; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++){
+                    for (; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++) {
                         fillIndexses[j] = lastInt[0];
                     }
-                    /*fillIndexses[j] = -1;                       // обозначили границу полезного массива
-                    fillIndexses[fillIndexses.length-1] = j;    // зафиксировали полезную длину массива*/
-                    fillIndexses = getSliceInt(fillIndexses, 0, j-1);
-                    i = findIndexes[index].length;              // прерываем цикл поиска ключа, тк он был найден и обработан
+                /*fillIndexses[j] = -1;                       // обозначили границу полезного массива
+                fillIndexses[fillIndexses.length-1] = j;    // зафиксировали полезную длину массива*/
+                    fillIndexses = getSliceInt(fillIndexses, 0, j - 1);
+                    i = indexesByWord[index].length;              // прерываем цикл поиска ключа, тк он был найден и обработан
                 }
+            }
+            else{
+                i = indexesByWord[index].length;              // прерываем цикл поиска ключа, дошли до пустого ключа
             }
         }
         return fillIndexses;
