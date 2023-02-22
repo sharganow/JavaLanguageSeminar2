@@ -2,10 +2,21 @@
         Сформируйте часть WHERE этого запроса, используя StringBuilder. Данные для фильтрации приведены ниже в виде json строки.
         Если значение null, то параметр не должен попадать в запрос.
         Параметры для фильтрации: {"name":"Ivanov", "country":"Russia", "city":"Moscow", "age":"null"}  //*/
+import Lesson_02.Ex005_Logger;
+
 import java.io.*;
 import java.util.Scanner;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 public class JsonSearch {
 
+    static Logger logger = Logger.getLogger(JsonSearch.class.getName());
+
+    static FileHandler fh;
     static Scanner iScanner = new Scanner(System.in);
     static String[] keys = new String[] {"name", "country", "city", "age"};
     static String[] selectKeys = new String[keys.length]; // Сам Json поисковый запрос
@@ -100,7 +111,7 @@ public class JsonSearch {
             }
         }
         catch(Exception e){
-            System.out.printf("Что-то не пошло в файле %s: %s, это можно залогжить в файл", path, e.getMessage());
+            logger.log(Level.WARNING, String.format("Что-то не пошло в файле %s: %s, строка№114", path, e.getMessage()));
             findIndex = new StringBuilder[1  + deltaFreeSpase];
             element.append("length:0,students:0" + System.lineSeparator());
             findIndex[0] = element;
@@ -111,10 +122,16 @@ public class JsonSearch {
         String pathProject = System.getProperty ("user.dir" );
         String pathDir = pathProject .concat("/JnSh");
         File dir = new File(pathDir);
-        System.out.println(dir.getAbsolutePath ());
+        //System.out.println(dir.getAbsolutePath ());
         if (dir.mkdir()) {
             try {
                 if (dir.list().length == 0) {
+
+                    fh = new FileHandler(pathDir.concat("/log.txt"), true);
+                    logger.addHandler(fh);
+                    SimpleFormatter sFormat = new SimpleFormatter();
+                    fh.setFormatter(sFormat);
+
                     String pathFile = pathDir.concat("/students.base");
                     File file = new File(pathFile);
                     if(file.createNewFile()){
@@ -123,7 +140,8 @@ public class JsonSearch {
                         fileWriter.append(System.lineSeparator());
                         fileWriter.flush();
                         fileWriter.close();
-                        System.out.println("Файл базы данных студентов создан, он пуст, можно это заложить в файл");
+                        studentsBase = readFile(pathFile);
+                        logger.log(Level.INFO, String.format("Файл базы данных студентов создан, он пуст"));
                         File[] files = new File[keys.length];
                         byte i = 0;
                         for (String key : keys){
@@ -135,31 +153,42 @@ public class JsonSearch {
                                 filesWriter.append(System.lineSeparator());
                                 filesWriter.flush();
                                 filesWriter.close();
-                                System.out.printf("Поисковый Файл %s.keys  базы данных студенитов создан, он пуст, можно это заложить в файл\n", key);
+                                logger.log(Level.INFO, String.format("Поисковый Файл %s.keys  базы данных студенитов создан, он пуст", key));
                             }
+                            indexesByWord[getIndex(keys, key)] = readFile(pathFile);
                         }
                     }
                     else{
-                        System.out.println( "Этого не может быть, " +
-                                "файла не может существовать, " +
-                                "мы дирректорию-то только что создали," +
-                                "это тоже можно заложить в файл"            );
+                        logger.log(Level.WARNING, String.format( "Файла не может существовать, " +
+                                                                 "мы дирректорию-то только что создали, Строка №161"));
                     }
                 }
             }
             catch(Exception e){
-                System.out.printf("Что-то не пошло: %s, это можно залогжить в файл", e.getMessage());
+                logger.log(Level.WARNING, String.format("Что-то не пошло: %s, момент создания файлов, строка№168", e.getMessage()));
             }
         }
         else{
-            String pathFile = pathDir.concat("/students.base");
-            studentsBase = readFile(pathFile);
-            for(String key : keys){
-                pathFile = pathDir.concat("/" + key + ".keys");
-                indexesByWord[getIndex(keys, key)] = readFile(pathFile);
+            try {
+
+                fh = new FileHandler(pathDir.concat("/log.txt"), true);
+                logger.addHandler(fh);
+                SimpleFormatter sFormat = new SimpleFormatter();
+                fh.setFormatter(sFormat);
+
+                String pathFile = pathDir.concat("/students.base");
+                studentsBase = readFile(pathFile);
+                for (String key : keys) {
+                    pathFile = pathDir.concat("/" + key + ".keys");
+                    indexesByWord[getIndex(keys, key)] = readFile(pathFile);
+                }
+                filesChanged = new boolean[]{false, false, false, false};
             }
-            filesChanged = new boolean[] {false, false, false, false};
+            catch(Exception e){
+                logger.log(Level.WARNING, String.format("Что-то не пошло: %s, момент загрузки файлов, строка№188", e.getMessage()));
+            }
         }
+        logger.log(Level.INFO, String.format("Прогамма запущена пользователем"));
 /*        for (String fname : dir.list()) {
             System.out.printf("%s \t%d\n",fname, fname.length());
         } //*/
@@ -192,7 +221,7 @@ public class JsonSearch {
             }
         }
         catch(Exception e){
-            System.out.printf("Что-то не пошло: %s, это можно залогжить в файл", e.getMessage());
+            logger.log(Level.WARNING, String.format("Что-то не пошло: %s, момент ввода ключа пользователем, строка №222", e.getMessage()));
             seek = false;
         }
         return seek;
@@ -233,8 +262,9 @@ public class JsonSearch {
         }
         if(ifSearchQueryFull(fields)){
             if (findStudents == null){
-                System.out.println("Студента: {"+getSelectString(fields)+"} не было в базе и мы его добавили");
-                int newStudent = addNewStudentToStudentsBase(studentsBase, getSelectString(fields));
+                String sNewStudent = getSelectString(fields);
+                System.out.println("Студента: {"+ sNewStudent +"} не было в базе и мы его добавили");
+                int newStudent = addNewStudentToStudentsBase(studentsBase, sNewStudent);
                 if(newStudent > 0){
                     int indexKey;
                     for(String key : keys){
@@ -244,10 +274,8 @@ public class JsonSearch {
                                                                                 fields[indexKey],
                                                                                 newStudent);
                     }
-                    System.out.println("У нас получилось");
                 }
-
-
+                logger.log(Level.INFO, String.format("Студента: {%s} добавили в базу данных", sNewStudent));
             }
             else{
                 System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} дал следующий результат:");
@@ -258,7 +286,7 @@ public class JsonSearch {
         }
         else{
             if (findStudents == null){
-                System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} не дал следующий результата");
+                System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} не дал результата");
             }
             else{
                 System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} дал следующий результат:");
@@ -328,7 +356,10 @@ public class JsonSearch {
     static boolean ifSearchQueryFull(String[] fields){
         boolean bSearchQueryFull = true;
         for(String word: fields){
-            if(word == null) bSearchQueryFull = false; break;
+            if(word == null){
+                bSearchQueryFull = false;
+                break;
+            }
         }
         return bSearchQueryFull;
     }
@@ -361,8 +392,6 @@ public class JsonSearch {
                     for (; (lastInt = getInt(keyElement.toString(), lastInt[1]))[0] > 0; j++) {
                         fillIndexses[j] = lastInt[0];
                     }
-                /*fillIndexses[j] = -1;                       // обозначили границу полезного массива
-                fillIndexses[fillIndexses.length-1] = j;    // зафиксировали полезную длину массива*/
                     fillIndexses = getSliceInt(fillIndexses, 0, j - 1);
                     i = indByWord.length;              // прерываем цикл поиска ключа, тк он был найден и обработан
                 }
@@ -411,7 +440,7 @@ public class JsonSearch {
                         fileWriter.close();
                     }
                     catch(Exception e){
-                        System.out.printf("Что-то не пошло c файлом %s во время сохранения: %s, это можно залогжить в файл",pathFile, e.getMessage());
+                        logger.log(Level.WARNING, String.format("Что-то не пошло c файлом %s во время сохранения: %s, строка №440", pathFile, e.getMessage()));
                     }
                 }
             }
@@ -435,11 +464,12 @@ public class JsonSearch {
                     fileWriter.close();
                 }
                 catch(Exception e){
-                    System.out.printf("Что-то не пошло c файлом %s во время сохранения: %s, это можно залогжить в файл",pathFile, e.getMessage());
+                    logger.log(Level.WARNING, String.format("Что-то не пошло c файлом %s во время сохранения: %s, это можно залогжить в файл",pathFile, e.getMessage()));
                 }
             }
         }
         iScanner.close();
+        logger.log(Level.INFO, String.format("Прогамма завершена пользователем"));
     }
 
     public static void main(String[] args){
