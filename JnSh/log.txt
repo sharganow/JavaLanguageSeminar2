@@ -22,3 +22,13 @@ INFO: Студента: {name:Andrew, country:England, city:London, age:45} до
 INFO: Студента: {name:Viktoria, country:Russia, city:Chelyabinsk, age:13} добавили в базу данных
 февр. 23, 2023 1:47:56 AM JsonSearch stopAndQuit
 INFO: Прогамма завершена пользователем
+февр. 23, 2023 12:16:28 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 12:18:46 PM JsonSearch seekStudent
+INFO: Студента: {name:Anna, country:Russia, city:Tomsk, age:18} добавили в базу данных
+февр. 23, 2023 12:20:11 PM JsonSearch seekStudent
+INFO: Студента: {name:Anna, country:Kazakhstan, city:Shahtinsk, age:3} добавили в базу данных
+февр. 23, 2023 12:20:46 PM JsonSearch seekStudent
+INFO: Студента: {name:Anna, country:Russia, city:Snezhinsk, age:29} добавили в базу данных
+февр. 23, 2023 12:21:19 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем

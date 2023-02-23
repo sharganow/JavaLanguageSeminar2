@@ -1,6 +1,9 @@
-length:5, students:5
+length:8, students:8
 name:Andrew, country:Russia, city:Tomsk, age:16
 name:Andrew, country:Russia, city:Tomsk, age:17
 name:Viktoria, country:England, city:London, age:20
 name:Andrew, country:England, city:London, age:45
 name:Viktoria, country:Russia, city:Chelyabinsk, age:13
+name:Anna, country:Russia, city:Tomsk, age:18
+name:Anna, country:Kazakhstan, city:Shahtinsk, age:3
+name:Anna, country:Russia, city:Snezhinsk, age:29

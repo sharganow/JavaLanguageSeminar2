@@ -13,23 +13,18 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class JsonSearch {
-
     static Logger logger = Logger.getLogger(JsonSearch.class.getName());
-
     static FileHandler fh;
     static Scanner iScanner = new Scanner(System.in);
     static String[] keys = new String[] {"name", "country", "city", "age"};
     static String[] selectKeys = new String[keys.length]; // Сам Json поисковый запрос
     static String[] filesNames = new String[keys.length];
     static boolean[] filesChanged = new boolean[] {false, false, false, false};
-
     static int deltaFreeSpase = 10;
     static StringBuilder[][] indexesByWord = new StringBuilder[keys.length][];
     static StringBuilder[] studentsBase = null;
-
     static int[][] findIndexesByWord = new int[keys.length][];
     static StringBuilder[] matchedStudents = null;
-
 
     static int[] getInt(String user_task, int index){
         int[] takeInt = new int[] {-1, index};
@@ -56,6 +51,7 @@ public class JsonSearch {
         }
         return takeInt;
     }
+
     static StringBuilder[] readFile(String path){
         StringBuilder[]  findIndex;
         StringBuilder    element = new StringBuilder();
@@ -92,9 +88,8 @@ public class JsonSearch {
                             lastInt = getInt(str, lastIndex);
                             findIndex[0].delete(0, findIndex[0].length());
                             if(lastInt[0] != students){
-                                System.out.printf(  "В файле %s отличаются приведённое " +
-                                                    "количество студентов:%s от фактического:%s, " +
-                                                    "можно это заложить в файл", path, lastInt[0], students);
+                                logger.log(Level.WARNING, String.format("В файле %s отличаются приведённое " +
+                                        "количество студентов:%s от фактического:%s", path, lastInt[0], students));
                             }
                             findIndex[0].append("length:" + String.valueOf(lengthFile) + ",students:" + String.valueOf(students));
                         }
@@ -118,15 +113,15 @@ public class JsonSearch {
         }
         return findIndex;
     }
+
     static void startInitialFiles(){
         String pathProject = System.getProperty ("user.dir" );
         String pathDir = pathProject .concat("/JnSh");
         File dir = new File(pathDir);
         //System.out.println(dir.getAbsolutePath ());
-        if (dir.mkdir()) {
-            try {
-                if (dir.list().length == 0) {
-
+        if(dir.mkdir()){
+            try{
+                if(dir.list().length == 0){
                     fh = new FileHandler(pathDir.concat("/log.txt"), true);
                     logger.addHandler(fh);
                     SimpleFormatter sFormat = new SimpleFormatter();
@@ -169,8 +164,7 @@ public class JsonSearch {
             }
         }
         else{
-            try {
-
+            try{
                 fh = new FileHandler(pathDir.concat("/log.txt"), true);
                 logger.addHandler(fh);
                 SimpleFormatter sFormat = new SimpleFormatter();
@@ -204,6 +198,7 @@ public class JsonSearch {
         }
         return index;
     }
+
     static boolean fillSelect(String[] fields){
         boolean seek = false;
         try {
@@ -226,6 +221,7 @@ public class JsonSearch {
         }
         return seek;
     }
+
     static String getSelectString(String[] fields){
         int i = 0;
         for(String value : fields){
@@ -241,16 +237,18 @@ public class JsonSearch {
         }
         return String.join(", ",mergeKeyFields);
     }
+
     static void seekStudent(String[] fields){
         int[] findStudents = null;
-        for (String key : keys) {
+        for(String key : keys){
             int i = getIndex(keys, key);
-            if(fields[i]!= null) {
-                if (findIndexesByWord[i] != null) {
-                    if (findStudents == null) {
+            if(fields[i]!= null){
+                if(findIndexesByWord[i] != null){
+                    if(findStudents == null){
                         findStudents = getSliceInt(findIndexesByWord[i], 0, findIndexesByWord[i].length - 1);
-                    } else {
-                        if ((findStudents = getMatchedOfCoupleIndexes(findStudents, findIndexesByWord[i])) == null)
+                    }
+                    else{
+                        if((findStudents = getMatchedOfCoupleIndexes(findStudents, findIndexesByWord[i])) == null)
                             break;
                     }
                 }
@@ -261,7 +259,7 @@ public class JsonSearch {
             }
         }
         if(ifSearchQueryFull(fields)){
-            if (findStudents == null){
+            if(findStudents == null){
                 String sNewStudent = getSelectString(fields);
                 System.out.println("Студента: {"+ sNewStudent +"} не было в базе и мы его добавили");
                 int newStudent = addNewStudentToStudentsBase(studentsBase, sNewStudent);
@@ -274,8 +272,12 @@ public class JsonSearch {
                                                                                 fields[indexKey],
                                                                                 newStudent);
                     }
+                    logger.log(Level.INFO, String.format("Студента: {%s} добавили в базу данных", sNewStudent));
                 }
-                logger.log(Level.INFO, String.format("Студента: {%s} добавили в базу данных", sNewStudent));
+                else{
+                    logger.log(Level.WARNING, String.format("Студента: {%s} НЕ добавили в базу данных", sNewStudent));
+                }
+
             }
             else{
                 System.out.println("Поиск по запросу: {"+getSelectString(fields)+"} дал следующий результат:");
@@ -305,7 +307,10 @@ public class JsonSearch {
         int length = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
         lastInt[1] = base[0].indexOf(":", lastInt[1]);
         int students = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
-        if(students < 0) students = 0;
+        if(students < 0){
+            students = 0;
+            logger.log(Level.WARNING, String.format("В файле базы данных отсутствует второй параметр: \"students\""));
+        }
 
         for(int i = base.length - deltaFreeSpase; i < base.length; i++){
             if(base[i] == null){
@@ -319,6 +324,9 @@ public class JsonSearch {
         if(iNewStudent > 0){
             base[0].delete(0, base[0].length()).append(String.format("length:%d, students:%d",length, students));
         }
+        else{
+            logger.log(Level.WARNING, String.format("В оперативной структуре файла базы данных закончилось свободное пространство"));
+        }
         return iNewStudent;
     }
     static boolean addIndexOfNewStudentToDataBase(StringBuilder[] base, String sWordNewStudent, int iNewStudent){
@@ -329,7 +337,10 @@ public class JsonSearch {
         int length = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
         lastInt[1] = base[0].indexOf(":", lastInt[1]);
         int students = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
-        if(students < 0) students = 0;
+        if(students < 0){
+            students = 0;
+            logger.log(Level.WARNING, String.format("В поисковом файле базы данных отсутствует второй параметр: \"students\""));
+        }
 
         for(int i = 0; i < base.length; i++){
             if(base[i] == null){
@@ -349,10 +360,17 @@ public class JsonSearch {
             }
         }
 
-        if(success) base[0].delete(0, base[0].length()).append(String.format("length:%d, students:%d",length, students));
+        if(success){
+            base[0].delete(0, base[0].length()).append(String.format("length:%d, students:%d",length, students));
+        }
+        else{
+            logger.log(Level.WARNING, String.format("В оперативной структуре поискового файла базы " +
+                    "данных закончилось свободное пространство для ключа %s", sWordNewStudent));
+        }
 
         return success;
     }
+
     static boolean ifSearchQueryFull(String[] fields){
         boolean bSearchQueryFull = true;
         for(String word: fields){
@@ -363,6 +381,7 @@ public class JsonSearch {
         }
         return bSearchQueryFull;
     }
+
     static int[] getMatchedOfCoupleIndexes(int[] first, int[] second){
         int[] matched = new int[first.length];
         int matcedValue = 0;
@@ -402,6 +421,7 @@ public class JsonSearch {
         }
         return fillIndexses;
     }
+
     static int[] getSliceInt(int[] mass, int first, int last){
         int[] slice = null;
         if(last >= mass.length)  last = mass.length - 1;
@@ -413,6 +433,7 @@ public class JsonSearch {
         }
         return slice;
     }
+
     static void stopAndQuit(){
         boolean saveStudentBase = false;
         String pathProject = System.getProperty ("user.dir" );
