@@ -1,9 +1,12 @@
-length:8, students:8
+length:11, students:11
 name:Andrew, country:Russia, city:Tomsk, age:16
-name:Andrew, country:Russia, city:Tomsk, age:17
-name:Viktoria, country:England, city:London, age:20
-name:Andrew, country:England, city:London, age:45
-name:Viktoria, country:Russia, city:Chelyabinsk, age:13
-name:Anna, country:Russia, city:Tomsk, age:18
-name:Anna, country:Kazakhstan, city:Shahtinsk, age:3
 name:Anna, country:Russia, city:Snezhinsk, age:29
+name:Viktoria, country:England, city:London, age:18
+name:Anna, country:Kazakhstan, city:Shahtinsk, age:3
+name:Sergey, country:Russia, city:Kasly, age:43
+name:Ilya, country:Russia, city:Chelyabinsk, age:33
+name:Irina, country:Russia, city:Kharatas, age:15
+name:Alexander, country:Russia, city:Krasnoyarsk, age:40
+name:Irina, country:Russia, city:Snezhinsk, age:12
+name:Konstantin, country:Ukraine, city:Starobelsk, age:30
+name:Evgeniy, country:Kazakhstan, city:Shahtinsk, age:9

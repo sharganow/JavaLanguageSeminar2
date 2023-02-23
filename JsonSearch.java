@@ -19,7 +19,7 @@ public class JsonSearch {
     static String[] keys = new String[] {"name", "country", "city", "age"};
     static String[] selectKeys = new String[keys.length]; // Сам Json поисковый запрос
     static String[] filesNames = new String[keys.length];
-    static boolean[] filesChanged = new boolean[] {false, false, false, false};
+    static boolean[] filesChanged = new boolean[keys.length];
     static int deltaFreeSpase = 10;
     static StringBuilder[][] indexesByWord = new StringBuilder[keys.length][];
     static StringBuilder[] studentsBase = null;
@@ -62,7 +62,8 @@ public class JsonSearch {
             String str = file.readLine();
             lastIndex = str.lastIndexOf("length:");
             if(lastIndex < 0){
-                System.out.printf("Отсутствует параметр %s в файле %s, можно это заложить в файл", "length:", path);
+                logger.log(Level.WARNING, String.format("Отсутствует параметр %s в файле %s, " +
+                        "можно это заложить в файл", "length:", path));
                 findIndex = new StringBuilder[1 + deltaFreeSpase];
                 element.append("length:0,students:0" + System.lineSeparator());
                 findIndex[0] = element;
@@ -138,8 +139,8 @@ public class JsonSearch {
                         studentsBase = readFile(pathFile);
                         logger.log(Level.INFO, String.format("Файл базы данных студентов создан, он пуст"));
                         File[] files = new File[keys.length];
-                        byte i = 0;
                         for (String key : keys){
+                            int i = getIndex(keys, key);
                             pathFile = pathDir.concat("/" + key + ".keys");
                             files[i] = new File(pathFile);
                             if(files[i].createNewFile()){
@@ -150,7 +151,8 @@ public class JsonSearch {
                                 filesWriter.close();
                                 logger.log(Level.INFO, String.format("Поисковый Файл %s.keys  базы данных студенитов создан, он пуст", key));
                             }
-                            indexesByWord[getIndex(keys, key)] = readFile(pathFile);
+                            indexesByWord[i] = readFile(pathFile);
+                            filesChanged[i] = false;
                         }
                     }
                     else{
@@ -173,10 +175,12 @@ public class JsonSearch {
                 String pathFile = pathDir.concat("/students.base");
                 studentsBase = readFile(pathFile);
                 for (String key : keys) {
+                    int i = getIndex(keys, key);
                     pathFile = pathDir.concat("/" + key + ".keys");
-                    indexesByWord[getIndex(keys, key)] = readFile(pathFile);
+                    indexesByWord[i] = readFile(pathFile);
+                    filesChanged[i] = false;
                 }
-                filesChanged = new boolean[]{false, false, false, false};
+
             }
             catch(Exception e){
                 logger.log(Level.WARNING, String.format("Что-то не пошло: %s, момент загрузки файлов, строка№188", e.getMessage()));
@@ -216,7 +220,7 @@ public class JsonSearch {
             }
         }
         catch(Exception e){
-            logger.log(Level.WARNING, String.format("Что-то не пошло: %s, момент ввода ключа пользователем, строка №222", e.getMessage()));
+            logger.log(Level.WARNING, String.format("Что-то не пошло: %s, момент ввода ключа пользователем, строка №222%s", e.getMessage(), e.fillInStackTrace().toString()));
             seek = false;
         }
         return seek;
@@ -262,13 +266,13 @@ public class JsonSearch {
             if(findStudents == null){
                 String sNewStudent = getSelectString(fields);
                 System.out.println("Студента: {"+ sNewStudent +"} не было в базе и мы его добавили");
-                int newStudent = addNewStudentToStudentsBase(studentsBase, sNewStudent);
+                int newStudent = addNewStudentToStudentsBase(sNewStudent);
                 if(newStudent > 0){
                     int indexKey;
                     for(String key : keys){
                         indexKey = getIndex(keys, key);
                         filesChanged[indexKey] = addIndexOfNewStudentToDataBase(
-                                                                                indexesByWord[indexKey],
+                                                                                indexKey,
                                                                                 fields[indexKey],
                                                                                 newStudent);
                     }
@@ -299,75 +303,93 @@ public class JsonSearch {
         }
     }
 
-    static int addNewStudentToStudentsBase(StringBuilder[] base, String sNewStudent){
+    static StringBuilder[] increaseTheSizeStringBuilderArray(StringBuilder[] base, int increaseDelta){
+        StringBuilder[] increasedBase = new StringBuilder[base.length + increaseDelta];
+        for(int i = 0; i < base.length; i++){
+            if(base[i] != null) {
+                increasedBase[i] = new StringBuilder().append(base[i].toString());
+            }
+            else{
+                break;
+            }
+        }
+        return increasedBase;
+    }
+
+    static int addNewStudentToStudentsBase(String sNewStudent){
         int iNewStudent = -1;
 
         int[] lastInt = new int[2];
-        lastInt[1] = base[0].indexOf(":");
-        int length = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
-        lastInt[1] = base[0].indexOf(":", lastInt[1]);
-        int students = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
+        lastInt[1] = studentsBase[0].indexOf(":");
+        int length = (lastInt = getInt(studentsBase[0].toString(), lastInt[1]))[0];
+        lastInt[1] = studentsBase[0].indexOf(":", lastInt[1]);
+        int students = (lastInt = getInt(studentsBase[0].toString(), lastInt[1]))[0];
         if(students < 0){
             students = 0;
             logger.log(Level.WARNING, String.format("В файле базы данных отсутствует второй параметр: \"students\""));
         }
 
-        for(int i = base.length - deltaFreeSpase; i < base.length; i++){
-            if(base[i] == null){
-                base[i] = new StringBuilder().append(sNewStudent);
+        for(int i = length + 1; i < studentsBase.length; i++){
+            if(studentsBase[i] == null){
+                studentsBase[i] = new StringBuilder().append(sNewStudent);
                 iNewStudent = i;
                 length++;
                 students++;
+                if(i == studentsBase.length - 1){
+                    studentsBase = increaseTheSizeStringBuilderArray(studentsBase, deltaFreeSpase);
+                }
                 break;
             }
         }
         if(iNewStudent > 0){
-            base[0].delete(0, base[0].length()).append(String.format("length:%d, students:%d",length, students));
+            studentsBase[0].delete(0, studentsBase[0].length()).append(String.format("length:%d, students:%d",length, students));
         }
         else{
             logger.log(Level.WARNING, String.format("В оперативной структуре файла базы данных закончилось свободное пространство"));
         }
         return iNewStudent;
     }
-    static boolean addIndexOfNewStudentToDataBase(StringBuilder[] base, String sWordNewStudent, int iNewStudent){
+
+    static boolean addIndexOfNewStudentToDataBase(int indexKey, String sWordNewStudent, int iNewStudent){
         boolean success = false;
 
         int[] lastInt = new int[2];
-        lastInt[1] = base[0].indexOf(":");
-        int length = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
-        lastInt[1] = base[0].indexOf(":", lastInt[1]);
-        int students = (lastInt = getInt(base[0].toString(), lastInt[1]))[0];
+        lastInt[1] = indexesByWord[indexKey][0].indexOf(":");
+        int length = (lastInt = getInt(indexesByWord[indexKey][0].toString(), lastInt[1]))[0];
+        lastInt[1] = indexesByWord[indexKey][0].indexOf(":", lastInt[1]);
+        int students = (lastInt = getInt(indexesByWord[indexKey][0].toString(), lastInt[1]))[0];
         if(students < 0){
             students = 0;
             logger.log(Level.WARNING, String.format("В поисковом файле базы данных отсутствует второй параметр: \"students\""));
         }
 
-        for(int i = 0; i < base.length; i++){
-            if(base[i] == null){
-                base[i] = new StringBuilder().append(String.format("%s:%d",sWordNewStudent,iNewStudent));
+        for(int i = 0; i < indexesByWord[indexKey].length; i++){
+            if(indexesByWord[indexKey][i] == null){
+                indexesByWord[indexKey][i] = new StringBuilder().append(String.format("%s:%d",sWordNewStudent,iNewStudent));
                 success = true;
                 length++;
                 students++;
+                if(i == indexesByWord[indexKey].length - 1){
+                    indexesByWord[indexKey] = increaseTheSizeStringBuilderArray(indexesByWord[indexKey], deltaFreeSpase);
+                }
                 break;
             }
             else{
-                if(base[i].lastIndexOf(sWordNewStudent+":") >= 0){
-                    base[i].append(String.format(",%d",iNewStudent));
+                if(indexesByWord[indexKey][i].lastIndexOf(sWordNewStudent+":") >= 0){
+                    indexesByWord[indexKey][i].append(String.format(",%d",iNewStudent));
                     success = true;
                     students++;
                     break;
                 }
             }
         }
-
         if(success){
-            base[0].delete(0, base[0].length()).append(String.format("length:%d, students:%d",length, students));
+            indexesByWord[indexKey][0].delete(0, indexesByWord[indexKey][0].length()).append(String.format("length:%d, students:%d",length, students));
         }
         else{
             logger.log(Level.WARNING, String.format("В оперативной структуре поискового файла базы " +
                     "данных закончилось свободное пространство для ключа %s", sWordNewStudent));
         }
-
         return success;
     }
 

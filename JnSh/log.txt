@@ -1,34 +1,106 @@
-февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+февр. 23, 2023 9:51:58 PM JsonSearch startInitialFiles
 INFO: Файл базы данных студентов создан, он пуст
-февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+февр. 23, 2023 9:51:58 PM JsonSearch startInitialFiles
 INFO: Поисковый Файл name.keys  базы данных студенитов создан, он пуст
-февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+февр. 23, 2023 9:51:58 PM JsonSearch startInitialFiles
 INFO: Поисковый Файл country.keys  базы данных студенитов создан, он пуст
-февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+февр. 23, 2023 9:51:58 PM JsonSearch startInitialFiles
 INFO: Поисковый Файл city.keys  базы данных студенитов создан, он пуст
-февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+февр. 23, 2023 9:51:58 PM JsonSearch startInitialFiles
 INFO: Поисковый Файл age.keys  базы данных студенитов создан, он пуст
-февр. 23, 2023 1:43:33 AM JsonSearch startInitialFiles
+февр. 23, 2023 9:51:58 PM JsonSearch startInitialFiles
 INFO: Прогамма запущена пользователем
-февр. 23, 2023 1:44:19 AM JsonSearch seekStudent
+февр. 23, 2023 9:52:29 PM JsonSearch seekStudent
 INFO: Студента: {name:Andrew, country:Russia, city:Tomsk, age:16} добавили в базу данных
-февр. 23, 2023 1:45:20 AM JsonSearch seekStudent
-INFO: Студента: {name:Andrew, country:Russia, city:Tomsk, age:17} добавили в базу данных
-февр. 23, 2023 1:46:03 AM JsonSearch seekStudent
-INFO: Студента: {name:Viktoria, country:England, city:London, age:20} добавили в базу данных
-февр. 23, 2023 1:46:36 AM JsonSearch seekStudent
-INFO: Студента: {name:Andrew, country:England, city:London, age:45} добавили в базу данных
-февр. 23, 2023 1:47:30 AM JsonSearch seekStudent
-INFO: Студента: {name:Viktoria, country:Russia, city:Chelyabinsk, age:13} добавили в базу данных
-февр. 23, 2023 1:47:56 AM JsonSearch stopAndQuit
+февр. 23, 2023 9:52:33 PM JsonSearch stopAndQuit
 INFO: Прогамма завершена пользователем
-февр. 23, 2023 12:16:28 PM JsonSearch startInitialFiles
+февр. 23, 2023 9:53:50 PM JsonSearch startInitialFiles
 INFO: Прогамма запущена пользователем
-февр. 23, 2023 12:18:46 PM JsonSearch seekStudent
-INFO: Студента: {name:Anna, country:Russia, city:Tomsk, age:18} добавили в базу данных
-февр. 23, 2023 12:20:11 PM JsonSearch seekStudent
-INFO: Студента: {name:Anna, country:Kazakhstan, city:Shahtinsk, age:3} добавили в базу данных
-февр. 23, 2023 12:20:46 PM JsonSearch seekStudent
+февр. 23, 2023 9:53:59 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 2 out of bounds for length 2, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+февр. 23, 2023 9:53:59 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 9:54:32 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 9:54:41 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 2 out of bounds for length 2, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+февр. 23, 2023 9:54:41 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 9:55:17 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 9:56:35 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 2 out of bounds for length 2, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+февр. 23, 2023 9:56:48 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 9:58:04 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 9:58:12 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 2 out of bounds for length 2, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+февр. 23, 2023 9:58:12 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 9:59:08 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 9:59:28 PM JsonSearch seekStudent
 INFO: Студента: {name:Anna, country:Russia, city:Snezhinsk, age:29} добавили в базу данных
-февр. 23, 2023 12:21:19 PM JsonSearch stopAndQuit
+февр. 23, 2023 10:00:16 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 10:01:24 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 10:03:49 PM JsonSearch seekStudent
+INFO: Студента: {name:Viktoria, country:England, city:London, age:18} добавили в базу данных
+февр. 23, 2023 10:05:00 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 4 out of bounds for length 4, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4
+февр. 23, 2023 10:05:00 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 10:09:43 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 10:12:25 PM JsonSearch seekStudent
+INFO: Студента: {name:Andrew, country:England, city:London, age:45} добавили в базу данных
+февр. 23, 2023 10:16:15 PM JsonSearch addNewStudentToStudentsBase
+WARNING: В оперативной структуре файла базы данных закончилось свободное пространство
+февр. 23, 2023 10:25:48 PM JsonSearch seekStudent
+INFO: Студента: {name:Anna, country:Russia, city:Tomsk, age:18} добавили в базу данных
+февр. 23, 2023 10:34:47 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 10:39:13 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 10:46:38 PM JsonSearch seekStudent
+INFO: Студента: {name:Anna, country:Kazakhstan, city:Shahtinsk, age:3} добавили в базу данных
+февр. 23, 2023 11:04:50 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 11:09:16 PM JsonSearch seekStudent
+INFO: Студента: {name:Anna, country:Kazakhstan, city:Shahtinsk, age:3} добавили в базу данных
+февр. 23, 2023 11:10:16 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 5 out of bounds for length 5, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5
+февр. 23, 2023 11:10:16 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 11:11:27 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 11:13:09 PM JsonSearch seekStudent
+INFO: Студента: {name:Sergey, country:Russia, city:Kasly, age:43} добавили в базу данных
+февр. 23, 2023 11:13:22 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 5 out of bounds for length 5, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5
+февр. 23, 2023 11:13:22 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 11:13:34 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 11:14:08 PM JsonSearch seekStudent
+INFO: Студента: {name:Ilya, country:Russia, city:Chelyabinsk, age:33} добавили в базу данных
+февр. 23, 2023 11:14:27 PM JsonSearch fillSelect
+WARNING: Что-то не пошло: Index 6 out of bounds for length 6, момент ввода ключа пользователем, строка №222java.lang.ArrayIndexOutOfBoundsException: Index 6 out of bounds for length 6
+февр. 23, 2023 11:14:27 PM JsonSearch stopAndQuit
+INFO: Прогамма завершена пользователем
+февр. 23, 2023 11:24:10 PM JsonSearch startInitialFiles
+INFO: Прогамма запущена пользователем
+февр. 23, 2023 11:28:56 PM JsonSearch seekStudent
+INFO: Студента: {name:Irina, country:Russia, city:Kharatas, age:15} добавили в базу данных
+февр. 23, 2023 11:30:40 PM JsonSearch seekStudent
+INFO: Студента: {name:Alexander, country:Russia, city:Krasnoyarsk, age:40} добавили в базу данных
+февр. 23, 2023 11:31:56 PM JsonSearch seekStudent
+INFO: Студента: {name:Irina, country:Russia, city:Snezhinsk, age:12} добавили в базу данных
+февр. 23, 2023 11:32:44 PM JsonSearch seekStudent
+INFO: Студента: {name:Konstantin, country:Ukraine, city:Starobelsk, age:30} добавили в базу данных
+февр. 23, 2023 11:33:38 PM JsonSearch seekStudent
+INFO: Студента: {name:Evgeniy, country:Kazakhstan, city:Shahtinsk, age:9} добавили в базу данных
+февр. 23, 2023 11:33:48 PM JsonSearch stopAndQuit
 INFO: Прогамма завершена пользователем
